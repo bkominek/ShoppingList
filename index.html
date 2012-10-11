@@ -1,0 +1,288 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Shopping List</title>
+	 	<link rel="stylesheet" href="css/theme-roller.min.css" />
+		<link rel="stylesheet" href="css/jquery.mobile.structure-1.1.1.min.css" />
+		<link rel="stylesheet" href="css/style.min.css" />
+
+		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
+		<script src="js/jquery-1.7.1.min.js"></script>
+		<script src="js/jquery.mobile-1.1.1.min.js"></script>
+		<script src="js/shopping.min.js"></script>
+		<script src="js/cordova-2.1.0.min.js"></script>
+	</head>
+	<body>
+	<script>
+		document.addEventListener("deviceready", onDeviceReady, false);   
+	</script>
+		<div id="home" data-role="page" data-theme="a" class="pageBackground" >
+			<div data-role="header" data-position="inline">
+				<div class="logo">Shopping List</div>
+				<div class="addItem"><input type="button" data-role="button" data-theme="a" value="About" onclick="setAbout()" /></div>				
+			</div>
+			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
+				<div class="homeContainer">
+					<div class="homeWrapper">
+						<div class="homeButton" onclick="readFileNames('createList')">&nbsp;&nbsp;&nbsp;Quick &nbsp;&nbsp;&nbsp;&nbsp; List</div>
+						<div class="homeButton" onclick="$.mobile.changePage('#calculator')">Price Calculator</div>
+						<div class="homeButton" onclick="$.mobile.changePage('#compare2items')">Price Compare</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+		<div id="about" data-role="page" data-theme="a" class="pageBackground">
+			<div data-role="header" data-position="inline">
+				<div class="logo">Shopping List</div>				
+			</div>
+			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
+				<img class="cmerLogo" src="images/cmer_small.png" onclick="openLinkInBrowser('http://cmer.uoguelph.ca')" />
+				<p>This application is designed to help you create shopping lists before you go to the store, or while you're shopping.  Keep a running total of what you're buying, and easily compare prices with online stores.</p>
+				<p>Shopping List was developed by Brandon Kominek, under the supervision of Dr. Qusay H. Mahmoud, Director of CMER. For more information please visit <div class="underline" onclick="openLinkInBrowser('http://cmer.uoguelph.ca')">http://cmer.uoguelph.ca</div></p>
+				<p>For the tutorial on how to create this app, visit <div class="underline" onclick="openLinkInBrowser('http://cmer.uoguelph.ca/kit.html')">http://cmer.uoguelph.ca/kit.html</div> </p>
+				<p>e-mail: cmer@uoguelph.ca</p>
+			</div>
+		</div>
+
+<!-- CREATE LIST -->
+		<div id="calculator" data-role="page" data-theme="a" class="pageBackground">
+			<div data-role="header" data-position="inline">
+				<div id="storeOverlay" class="overlay"></div>
+				<div id="storeContainer" class="storeContainer">
+					<div class="storeTitle">Update your location to refine searches</div>
+					<input type="text" data-theme"a" id="location" placeholder="Store Name" />
+					<div class="cancelStore"><input type="button" value="Cancel" data-theme="a" onclick="cancelStoreUpdate()" /></div>
+					<div class="updateStoreButton"><input type="button" value="update" onclick="updateStore()" /></div>
+					<div class="orDivider">---OR---</div>
+					<input type="button" value="use GPS" onclick="getCoordinates()" />
+				</div>
+				<div class="logo">Shopping List</div>
+				<div class="addItem"><input type="button" data-role="button" data-theme="a" value="Add Item" onclick="addButton()" /></div>
+			</div>
+			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
+				
+				<div id="itemsContainer" class="itemsContainer"></div>
+				<br />
+				<div class="compare" id="compareButton" style="display:none"><input type="button" data-role="button" data-theme="a" value="Compare" onclick="toggleCompare()" /></div>
+				<div id="tax" class="tax">0.00</div>
+				<div id="taxContainer" class="taxContainer">
+					<div style="display:inline-block"><input id="editTax" style="width:50px;" type="number" value="13" onchange="toggleTax()"></div><div style="display:inline-block">%</div>
+				</div> 
+				<div class="totalTax">Tax</div>
+					
+				<br /><br />
+				<div class="seperator"><hr></div>
+				<br />
+
+				<div id="total" class="total">$0.00</div>					
+				<div class="totalText">Total</div>
+
+				<div id="map"></div>
+			</div>
+			<div class="footer">
+				<div class="storeLocation" id="storeLocation">Unknown Store</div>
+				<div class="updateStore"><input type="button" value="Update Location" onclick="setStoreBox()" /></div>
+			</div>
+		</div>
+
+
+		<div id="add" data-role="page" data-theme="a" class="pageBackground" >
+			<div data-role="header" data-position="inline">
+				<div class="logo" style="margin-left: -70px;">Shopping List</div>			
+			</div>
+			<div class="fieldContainer">
+				<center><h2>Add New Item</h2></center>
+				<label for="namefield">Name</label>
+				<div class="namefield"><input type="text" id="namefield" value="" /></div>
+				<div class="searchButton"><input type="button" value="search" onclick="googleSearch(document.getElementById('namefield').value, store, 'selectItem', 'all', 'add')" /></div>
+				<!-- <img id="imgfield" class="imgfield" /> -->
+				<label for="pricefield">Price</label>
+				<input type="text" id="pricefield" value="" />
+				<!-- <label for="upcfield">UPC</label>
+				<input type="text" id="upcfield" value="" /> -->
+				<label for="noTax">Do not add tax to this item</label>
+				<input type="checkbox" value="noTax" id="noTax" />
+				<div class="discountContainer">
+					<label for="discountfield">Discount</label>
+					<input type="number" min="0" id="discountfield"  />
+				</div>
+			 	<div class="discountType">
+					<select id="discountType" data-native-menu="false" >
+						<option value="percent">%</option>
+						<option value="amount">$</option>
+					</select>
+				</div>
+
+				<br />
+				<div class="cancel"><input type="button" data-role="button" data-theme="a" value="Cancel" onclick="cancel()" /></div>
+				<div class="submit" style="float:right"><input type="button" data-role="button" data-theme="a" value="Add Item" onclick="submit()" /></div>
+				<br />				
+			</div>	
+		</div>
+
+
+		<div id="displayItems" data-role="page" data-theme="a" class="pageBackground">
+			<div data-role="header" data-position="fixed" data-update-page-padding="false" data-position="inline">
+				<div class="logo" style="margin-left: -70px;">Shopping List</div>	
+			</div>
+			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
+				<ul data-role="listview" data-theme="a" id="itemList"></ul>
+			</div>
+		</div>
+
+
+		<div id="compare" data-role="page" data-theme="a" class="pageBackground">
+			<div data-role="header" data-position="fixed" data-update-page-padding="false" data-position="inline">
+				<div class="logo" style="margin-left: -70px;">Shopping List</div>
+			</div>
+			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
+				<center><h2>Compare</h2></center>
+				<div id="compareName1" class="compareName1"></div>
+				<div id="comparePrice1" class="comparePrice1"></div>
+				<div id="compareLocation1" class="compareLocation1"></div>
+				<br />
+
+				<div class="compareLocation2"><input type="text" id="location2" placeholder="Store Name" /></div>
+				<div class="byLocation"><input type="button" data-role="button" data-theme="a" value="Compare By Stores" onclick="googleSearch(document.getElementById('compareName1').innerHTML, document.getElementById('location2').value, 'compareItem', 'store', 'compare')" /></div>
+				<div class="compareAll"><input type="button" data-role="button" data-theme="a" value="Compare All" onclick="googleSearch(document.getElementById('compareName1').innerHTML, '', 'compareItem', 'all', 'compare')"/></div>
+			</div>
+		</div>
+
+
+		<div id="compareItems" data-role="page" data-theme="a" class="pageBackground">
+			<div data-role="header" data-position="fixed" data-update-page-padding="false" data-position="inline">
+				<div class="logo" style="margin-left: -70px;">Shopping List</div>
+			</div>
+			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
+				<center><h1>Comparison</h1></center>
+				<div class="compareContainer">
+					<div id="finalName1" class="compareName1"></div>
+					<div id="finalPrice1" class="comparePrice1"></div>
+					<div id="finalLocation1" class="compareLocation1"></div>
+				</div>
+				<div class="compareContainer">
+					<div id="finalName2" class="compareName1"></div>
+					<div id="finalPrice2" class="comparePrice1"></div>
+					<div id="finalLocation2" class="compareLocation1"></div>
+					<div id="itemLink" class="viewOnline">View Online</div>
+					<div class="externLink">*opens in external browser</div>
+				</div>
+				<br />
+				<div class="differenceText">Difference: </div>
+				<div id="difference" class="difference"></div>
+			</div>
+		</div>
+
+
+
+<!-- END IN-STORE LIST -->
+
+<!-- QUICK LIST -->
+
+
+		<div id="displayLists" data-role="page" data-theme="a" class="pageBackground">
+			<div data-role="header" data-position="inline">
+				<div id="deleteOverlay" class="overlay"></div>
+				<div id="confirmDelete" class="deleteContainer">
+					<div class="fileTitle">Are you sure you want to delete this list?</div><br />
+					<div class="cancelSave"><input type="button" value="Cancel" data-theme="a" onclick="cancelDeleteList()" /></div>
+					<div class="okSave"><input id="deleteListButton" type="button" value="Delete" data-theme="a" /></div>
+				</div>
+				<div class="logo">Shopping List</div>
+			</div>
+			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0);height:100%" >
+
+				<div id="savedList"></div>
+				<div class="newList"><input type="button" value="New List" data-theme="a" data-role="button" onclick="$.mobile.changePage('#createList');" /></div>
+			</div>
+		</div>
+		
+
+		<div id="createList" data-role="page" data-theme="a" class="pageBackground">
+			<div data-role="header" data-position="inline">
+				<div id="overlay" class="overlay"></div>
+				<div id="fileContainer" class="fileContainer">
+					<div class="fileTitle">Save As</div>
+					<input type="text" data-theme"a" id="saveAsName" placeholder="List Name" />
+					<div class="cancelSave"><input type="button" value="Cancel" data-theme="a" onclick="cancelSave()" /></div>
+					<div class="okSave"><input type="button" value="Save" data-theme="a" onclick="save()" /></div>
+				</div>
+				<div id="confirmBack" class="fileContainer" style="width:300px">
+					<div class="fileTitle">Any unsaved items will be deleted.  Are you sure?</div>
+					<br />
+					<div class="cancelSave"><input type="button" value="Cancel" data-theme="a" onclick="cancelConfirm()" /></div>
+					<div class="okSave"><input type="button" value="Ok" data-theme="a" onclick="okConfirm()" /></div>
+				</div>
+				<div class="logo" >Shopping List</div>
+				<div class="addItem"><input type="button" data-role="button" data-theme="a" value="Remove" onclick="toggleRemove()" /></div>
+			</div>
+			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0);height:100%" >
+				
+				
+				<br />
+				<div id="newItems" class="newItems"></div>
+
+				<div class="newItemInput"><input type="text" placeholder="new item" id="newItemInput" /></div>
+				<div onclick="addToQuickList()" class="addOverlay"><a data-role="button" data-icon="plus" data-iconpos="notext" onclick="addToQuickList()" ></a></div>
+
+				<div class="save"><input type="button" value="Save List" data-theme"a" data-role="button" onclick="setSaveBox()" /></div>
+				<br />
+				<p style="margin-top:80px">*swipe items to cross out</p>
+			</div>			
+		</div>
+
+
+	<!-- END CREATE LIST -->	
+	<!-- COMPARE ITEMS -->
+
+
+		<div id="compare2items" data-role="page" data-theme="a" class="pageBackground">
+			<div data-role="header" data-position="inline">
+				<div class="logo">Shopping List</div>
+			</div>
+			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0);height:100%" >
+				
+				<center><h2>Price Compare</h2></center>
+				<input type="text" id="itemSearchName" placeholder="Item Name" />
+				<div id="search1">
+					<div class="searchText"><input type="text" id="item1SearchLocation" placeholder="Store 1 (empty for search all)" /></div>
+					<div class="searchButton"><input type="button" data-theme="a" data-role="button" value="search" onclick="searchItem1()" /></div>
+				</div>
+
+				<br />
+				<div class="item1contents" id="item1contents">
+					<div class="item1Name" id="item1Name"></div>
+					<div class="item1Price" id="item1Price"></div>
+					<div class="item1Location" id="item1Location"></div>
+			 		<div class="viewOnline" id="item1Link">View Online</div>
+			 		<div class="externLink">*opens in external browser </div>
+				</div>
+				<div id="search2" style="display:none">
+					<div class="searchText"><input type="text" id="item2SearchLocation" placeholder="Store 2 (empty for search all)" /></div>
+					<div class="searchButton"><input type="button" data-theme="a" data-role="button" value="search" onclick="searchItem2()" /></div>
+				</div>
+				<br />
+				<div class="item2contents" id="item2contents">
+					<div class="item2Name" id="item2Name"></div>
+					<div class="item1Price" id="item2Price"></div>
+					<div class="item1Location" id="item2Location"></div>
+					<div class="viewOnline" id="item2Link">View Online</div>
+					<div class="externLink">*opens in external browser</div>
+				</div>
+				<br />
+				<div class="resetCompare"><input type="button" value="New Comparison" onclick="resetCompare()" /></div>
+				
+			</div>
+		</div>
+		<script>
+			$("#item1contents").hide();
+			$("#item2contents").hide();
+		</script>
+	</body>
+</html>
