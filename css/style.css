@@ -110,7 +110,7 @@ body {
 
 .submit, .cancel {
 	margin-top: 35px;
-	width:130px;
+	width:140px;
 	position:relative;
 	display:inline-block;
 }
@@ -240,7 +240,7 @@ body {
 	font-weight: bold;
 	margin-left:8px;
 	margin-top: 9px;
-	width:62%;
+	width:65%;
 }
 
 .footer {
@@ -266,22 +266,15 @@ body {
 }
 
 .homeButton {
-	width:140px;
+	width:156px;
 	height:107px;
 	padding-top:30px;
-
-	
-background: #5a84dd;
-background: -moz-linear-gradient(top, #5a84dd 1%, #2989d8 41%, #658fd8 66%, #7db9e8 100%);
-background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#5a84dd), color-stop(41%,#2989d8), color-stop(66%,#658fd8), color-stop(100%,#7db9e8));
-background: -webkit-linear-gradient(top, #5a84dd 1%,#2989d8 41%,#658fd8 66%,#7db9e8 100%);
-background: -o-linear-gradient(top, #5a84dd 1%,#2989d8 41%,#658fd8 66%,#7db9e8 100%);
-background: -ms-linear-gradient(top, #5a84dd 1%,#2989d8 41%,#658fd8 66%,#7db9e8 100%);
-background: linear-gradient(to bottom, #5a84dd 1%,#2989d8 41%,#658fd8 66%,#7db9e8 100%);
-
-
-
-
+	background-image: -ms-radial-gradient(center, ellipse farthest-corner, #4F4F4F 0%, #00A3EF 100%);
+	background-image: -moz-radial-gradient(center, ellipse farthest-corner, #4F4F4F 0%, #00A3EF 100%);
+	background-image: -o-radial-gradient(center, ellipse farthest-corner, #4F4F4F 0%, #00A3EF 100%); 
+	background-image: -webkit-gradient(radial, center center, 0, center center, 506, color-stop(0, #4F4F4F), color-stop(1, #00A3EF));
+	background-image: -webkit-radial-gradient(center, ellipse farthest-corner, #4F4F4F 0%, #00A3EF 100%);
+	background-image: radial-gradient(ellipse farthest-corner at center, #4F4F4F 0%, #00A3EF 100%);
 	color: #fff;
 	font-weight: bold;
 	font-size:20pt;
@@ -400,7 +393,7 @@ background: linear-gradient(to bottom, #5a84dd 1%,#2989d8 41%,#658fd8 66%,#7db9e
 .overlay {
 	margin-top:-100px;
 	/*margin-left:-30px;*/
-	/*margin-left: -9999px;*/
+	margin-left: -9999px;
 	position:fixed;
 	background-color: rgba(50, 47, 50,0.7);
 	height: 1000px;

@@ -5,29 +5,27 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Shopping List</title>
-	 	<link rel="stylesheet" href="css/theme-roller.min.css" />
+	 	<!-- <link rel="stylesheet" href="css/theme-roller.min.css" /> -->
 		<link rel="stylesheet" href="css/jquery.mobile.structure-1.1.1.min.css" />
-		<link rel="stylesheet" href="css/style.min.css" />
+		<!-- <link rel="stylesheet" href="css/style.min.css" /> -->
 
 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
 		<script src="js/jquery-1.7.1.min.js"></script>
 		<script src="js/jquery.mobile-1.1.1.min.js"></script>
 		<script src="js/shopping.min.js"></script>
-		<script src="js/cordova-2.1.0.min.js"></script>
+		<script src="js/cordova-2.1.0.js"></script>
 	</head>
 	<body>
-	<script>
-		document.addEventListener("deviceready", onDeviceReady, false);   
-	</script>
+
 		<div id="home" data-role="page" data-theme="a" class="pageBackground" >
 			<div data-role="header" data-position="inline">
 				<div class="logo">Shopping List</div>
-				<div class="addItem"><input type="button" data-role="button" data-theme="a" value="About" onclick="setAbout()" /></div>				
+				<div class="addItem"><input type="button" data-role="button" data-theme="a" value="About" onclick="$.mobile.changePage('#about')" /></div>				
 			</div>
 			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
 				<div class="homeContainer">
 					<div class="homeWrapper">
-						<div class="homeButton" onclick="readFileNames('createList')">&nbsp;&nbsp;&nbsp;Quick &nbsp;&nbsp;&nbsp;&nbsp; List</div>
+						<div class="homeButton" onclick="readFileNames('createList')">&nbsp;Quick &nbsp; List</div>
 						<div class="homeButton" onclick="$.mobile.changePage('#calculator')">Price Calculator</div>
 						<div class="homeButton" onclick="$.mobile.changePage('#compare2items')">Price Compare</div>
 					</div>
@@ -39,6 +37,7 @@
 
 		<div id="about" data-role="page" data-theme="a" class="pageBackground">
 			<div data-role="header" data-position="inline">
+				<div class="backButton" ><input type="button" data-role="button" data-theme="a" value="Back" onclick="$.mobile.changePage('#home')" /></div>
 				<div class="logo">Shopping List</div>				
 			</div>
 			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
@@ -52,27 +51,27 @@
 
 <!-- CREATE LIST -->
 		<div id="calculator" data-role="page" data-theme="a" class="pageBackground">
+			<div id="storeOverlay" class="overlay"></div>
+			<div id="storeContainer" class="storeContainer">
+				<div class="storeTitle">Update your location to refine searches</div>
+				<input type="text" data-theme"a" id="location" placeholder="Store Name" />
+				<div class="cancelStore"><input type="button" value="Cancel" data-theme="a" onclick="cancelStoreUpdate()" /></div>
+				<div class="updateStoreButton"><input type="button" value="update" onclick="updateStore()" /></div>
+				<div class="orDivider">---OR---</div>
+				<input type="button" value="use GPS" onclick="getCoordinates()" />
+			</div>
 			<div data-role="header" data-position="inline">
-				<div id="storeOverlay" class="overlay"></div>
-				<div id="storeContainer" class="storeContainer">
-					<div class="storeTitle">Update your location to refine searches</div>
-					<input type="text" data-theme"a" id="location" placeholder="Store Name" />
-					<div class="cancelStore"><input type="button" value="Cancel" data-theme="a" onclick="cancelStoreUpdate()" /></div>
-					<div class="updateStoreButton"><input type="button" value="update" onclick="updateStore()" /></div>
-					<div class="orDivider">---OR---</div>
-					<input type="button" value="use GPS" onclick="getCoordinates()" />
-				</div>
-				<div class="logo">Shopping List</div>
+				<div class="backButton" ><input type="button" data-role="button" data-theme="a" value="Back" onclick="$.mobile.changePage('#home')" /></div>
+				<div class="logo"  onclick="$.mobile.changePage('#home')">Shopping List</div>
 				<div class="addItem"><input type="button" data-role="button" data-theme="a" value="Add Item" onclick="addButton()" /></div>
 			</div>
 			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
-				
 				<div id="itemsContainer" class="itemsContainer"></div>
 				<br />
 				<div class="compare" id="compareButton" style="display:none"><input type="button" data-role="button" data-theme="a" value="Compare" onclick="toggleCompare()" /></div>
 				<div id="tax" class="tax">0.00</div>
 				<div id="taxContainer" class="taxContainer">
-					<div style="display:inline-block"><input id="editTax" style="width:50px;" type="number" value="13" onchange="toggleTax()"></div><div style="display:inline-block">%</div>
+					<div style="display:inline-block"><input id="editTax" style="width:40px;" type="number" value="13" onchange="toggleTax()"></div><div style="display:inline-block">%</div>
 				</div> 
 				<div class="totalTax">Tax</div>
 					
@@ -92,8 +91,9 @@
 		</div>
 
 
-		<div id="add" data-role="page" data-theme="a" class="pageBackground" >
+		<div id="add" data-role="page" data-theme="a" class="pageBackground">
 			<div data-role="header" data-position="inline">
+				<div class="backButton" ><input type="button" data-role="button" data-theme="a" value="Back" onclick="history.back()" /></div>
 				<div class="logo" style="margin-left: -70px;">Shopping List</div>			
 			</div>
 			<div class="fieldContainer">
@@ -129,6 +129,7 @@
 
 		<div id="displayItems" data-role="page" data-theme="a" class="pageBackground">
 			<div data-role="header" data-position="fixed" data-update-page-padding="false" data-position="inline">
+				<div class="backButton" ><input id="displayItemsBack" type="button" data-role="button" data-theme="a" value="Back" onclick="$.mobile.changePage('#add');" /></div>
 				<div class="logo" style="margin-left: -70px;">Shopping List</div>	
 			</div>
 			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
@@ -139,7 +140,8 @@
 
 		<div id="compare" data-role="page" data-theme="a" class="pageBackground">
 			<div data-role="header" data-position="fixed" data-update-page-padding="false" data-position="inline">
-				<div class="logo" style="margin-left: -70px;">Shopping List</div>
+				<div class="backButton" ><input type="button" data-role="button" data-theme="a" value="Back" onclick="$.mobile.changePage('#calculator')" /></div>
+				
 			</div>
 			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
 				<center><h2>Compare</h2></center>
@@ -157,7 +159,7 @@
 
 		<div id="compareItems" data-role="page" data-theme="a" class="pageBackground">
 			<div data-role="header" data-position="fixed" data-update-page-padding="false" data-position="inline">
-				<div class="logo" style="margin-left: -70px;">Shopping List</div>
+				<div class="back" ><input id="backButton" type="button" data-role="button" data-theme="a" value="Back" onclick="$.mobile.changePage('#compare')" /></div>
 			</div>
 			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0)" >
 				<center><h1>Comparison</h1></center>
@@ -194,7 +196,8 @@
 					<div class="cancelSave"><input type="button" value="Cancel" data-theme="a" onclick="cancelDeleteList()" /></div>
 					<div class="okSave"><input id="deleteListButton" type="button" value="Delete" data-theme="a" /></div>
 				</div>
-				<div class="logo">Shopping List</div>
+				<div class="backButton" ><input type="button" data-role="button" data-theme="a" value="Back" onclick="$.mobile.changePage('#home')" /></div>
+				<div class="logo" onclick="$.mobile.changePage('#home')">Shopping List</div>
 			</div>
 			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0);height:100%" >
 
@@ -206,6 +209,11 @@
 
 		<div id="createList" data-role="page" data-theme="a" class="pageBackground">
 			<div data-role="header" data-position="inline">
+				<div class="backButton" ><input type="button" data-role="button" data-theme="a" value="Back" onclick="setConfirmBox()" /></div>
+				<div class="logo" onclick="confirmRedirect()">Shopping List</div>
+				<div class="addItem"><input type="button" data-role="button" data-theme="a" value="Remove" onclick="toggleRemove()" /></div>
+			</div>
+			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0);height:100%" >
 				<div id="overlay" class="overlay"></div>
 				<div id="fileContainer" class="fileContainer">
 					<div class="fileTitle">Save As</div>
@@ -219,12 +227,6 @@
 					<div class="cancelSave"><input type="button" value="Cancel" data-theme="a" onclick="cancelConfirm()" /></div>
 					<div class="okSave"><input type="button" value="Ok" data-theme="a" onclick="okConfirm()" /></div>
 				</div>
-				<div class="logo" >Shopping List</div>
-				<div class="addItem"><input type="button" data-role="button" data-theme="a" value="Remove" onclick="toggleRemove()" /></div>
-			</div>
-			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0);height:100%" >
-				
-				
 				<br />
 				<div id="newItems" class="newItems"></div>
 
@@ -244,7 +246,8 @@
 
 		<div id="compare2items" data-role="page" data-theme="a" class="pageBackground">
 			<div data-role="header" data-position="inline">
-				<div class="logo">Shopping List</div>
+				<div class="backButton" ><input type="button" data-role="button" data-theme="a" value="Back" onclick="$.mobile.changePage('#home')" /></div>
+				<div class="logo" onclick="$.mobile.changePage('#home')">Shopping List</div>
 			</div>
 			<div data-role="content" data-theme="a" style="background: rgba(0,0,0,0);height:100%" >
 				

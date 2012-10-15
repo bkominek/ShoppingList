@@ -4,56 +4,18 @@ var globalTax = 13;
 var totalTax = 0;
 var store = "";
 var shoppingID = 0;
-var backPage = "home";
-
-function onBackKeyDown() {
-	if (backPage == "confirm") {
-		setConfirmBox();
-	} else {
- 		$.mobile.changePage("#" + backPage);	
- 	}
-}
-
-function setAbout() {
-	$.mobile.changePage('#about');
-	backPage = "home";
-}
-
-function onDeviceReady() {
-    document.addEventListener("backbutton", onBackKeyDown, false);
-
-    $("#add").bind("pageshow", function(){
-       	backPage = "calculator";
-    });
-    $("#compare").bind("pageshow", function(){
-      	backPage = "calculator";
-    });
-    $("#calculator").bind("pageshow", function(){
-      	backPage = "home";
-    });
-    $("#compare2items").bind("pageshow", function(){
-       	backPage = "home";
-    });
-    $("#createList").bind("pageshow", function(){
-       	backPage = "confirm";
-    });
-    $("#storeOverlay").hide();
-    $("#overlay").hide();
-    $("#deleteOverlay").hide();
-} 
 
 
 function addButton() {
 	$.mobile.changePage("#add");
 	items = $(".selectName");
-	if (items.length > 0) {
-		for (i = 0; i < items.length; i++) {
-			items[i].className = "singleItem";
-			items[i].removeAttribute("onclick");
-			deleteButtons[i].setAttribute("style", "z-index:2");
+		if (items.length > 0) {
+			for (i = 0; i < items.length; i++) {
+				items[i].className = "singleItem";
+				items[i].removeAttribute("onclick");
+				deleteButtons[i].setAttribute("style", "z-index:2");
+			}
 		}
-	}
-	backPage = "calculator";
 }
 
 function cancel() {
@@ -248,8 +210,7 @@ function updateStore() {
 }
 
 function googleSearch(query, storeName, functionName, filter, backLocation) {
-
-	backPage = backLocation;
+	document.getElementById("displayItemsBack").setAttribute("onclick", "$.mobile.changePage('#" + backLocation + "');");
 	clearDiv("itemList");
 
 	storeName = storeName.toLowerCase();
@@ -524,20 +485,17 @@ function removeItem(id) {
 }
 
 function setSaveBox() {
-	$("#overlay").show();
-	//document.getElementById("overlay").setAttribute("style", "margin-left:-30px");
+	document.getElementById("overlay").setAttribute("style", "margin-left:-30px");
 	document.getElementById("fileContainer").setAttribute("style", "margin-left:-125px");
 }
 
 function setStoreBox() {
-//	document.getElementById("storeOverlay").setAttribute("style", "margin-left:-30px");
-	$("#storeOverlay").show();
+	document.getElementById("storeOverlay").setAttribute("style", "margin-left:-30px");
 	document.getElementById("storeContainer").setAttribute("style", "margin-left:-125px");
 }
 
 function cancelStoreUpdate() {
-	//document.getElementById("storeOverlay").setAttribute("style", "margin-left:-9999px");
-	$("#storeOverlay").hide();
+	document.getElementById("storeOverlay").setAttribute("style", "margin-left:-9999px");
 	document.getElementById("location").value = "";
 	document.getElementById("storeContainer").setAttribute("style", "margin-left:-9999px");
 }
@@ -570,28 +528,18 @@ function save() {
 }
 
 function readFileNames(skipTo) {
-//	localStorage.clear();
+	//localStorage.clear();
 	clearDiv("newItems");
 	clearDiv("savedList");
 	files = localStorage.getItem("filenames");
-//	backPage = "home";	
 
 	if ( files == null) {
 		$.mobile.changePage("#" + skipTo);
-		
-		if (skipTo == "createList") {
-	//		backPage = "confirm";
-		}
-
 	} else {
 
 		if (files.length == 2) {
 			$.mobile.changePage("#" + skipTo);
-			if (skipTo == "createList") {
-	//			backPage = "confirm";
-			}
 		} else {
-			backPage = "home";	
 			$.mobile.changePage("#displayLists");
 			fileNames = JSON.parse(files);
 			list = $("#savedList");
@@ -609,7 +557,6 @@ function read(filename) {
         addItem(result[i])
     }
     $.mobile.changePage("#createList");
- //   backPage = "confirm";	
 }
 
 function removeByValue(arr){
@@ -624,15 +571,13 @@ function removeByValue(arr){
 }
 
 function setDeleteListBox(id, key) {
-	//document.getElementById("deleteOverlay").setAttribute("style", "margin-left:-30px");
-	$("#deleteOverlay").show();
+	document.getElementById("deleteOverlay").setAttribute("style", "margin-left:-30px");
 	document.getElementById("confirmDelete").setAttribute("style", "margin-left:-125px");
 	document.getElementById("deleteListButton").setAttribute("onclick", "deleteList('" + id + "','" + key + "')")
 }
 
 function cancelDeleteList() {
-	//document.getElementById("deleteOverlay").setAttribute("style", "margin-left:-9999px");
-	$("#deleteOverlay").hide();
+	document.getElementById("deleteOverlay").setAttribute("style", "margin-left:-9999px");
 	document.getElementById("confirmDelete").setAttribute("style", "margin-left:-9999px");
 }
 
@@ -654,8 +599,7 @@ function clearDiv(name) {
 }
 
 function cancelSave() {
-//	document.getElementById("overlay").setAttribute("style", "margin-left:-9999px");
-	$("#overlay").hide();
+	document.getElementById("overlay").setAttribute("style", "margin-left:-9999px");
 	document.getElementById("saveAsName").value = "";
 	document.getElementById("fileContainer").setAttribute("style", "margin-left:-9999px");
 }
@@ -724,25 +668,32 @@ function resetCompare() {
 }
 
 function setConfirmBox() {
-	//document.getElementById("overlay").setAttribute("style", "margin-left:-30px");
-	$("#overlay").show();
+	document.getElementById("overlay").setAttribute("style", "margin-left:-30px");
 	document.getElementById("confirmBack").setAttribute("style", "margin-left:-125px");
 }
 
 function cancelConfirm() {
-	$("#overlay").hide();
-	//document.getElementById("overlay").setAttribute("style", "margin-left:-9999px");
+	document.getElementById("overlay").setAttribute("style", "margin-left:-9999px");
 	document.getElementById("confirmBack").setAttribute("style", "margin-left:-9999px");
 }
 
 function okConfirm() {
 	readFileNames('home');
-	$("#overlay").hide();
-	//document.getElementById("overlay").setAttribute("style", "margin-left:-9999px");
+	document.getElementById("overlay").setAttribute("style", "margin-left:-9999px");
 	document.getElementById("confirmBack").setAttribute("style", "margin-left:-9999px");
 }
 
 function openLinkInBrowser(link) {
 	decodedLink = $('<div />').html(link).text();
+
     navigator.app.loadUrl(decodedLink, { openExternal:true } ); 
+}
+
+function onInvokeSuccess() {
+	/*console.log("invoke success");*/
+//	alert("invoke success");
+}
+function onInvokeError(err) {
+	/*console.log("invoke error: " + err);*/
+	//alert(err);
 }
